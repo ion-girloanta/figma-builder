@@ -1,0 +1,32 @@
+name: Deploy to Amplify
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Build
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Deploy to Amplify
+        uses: aws-actions/aws-amplify-deploy@v1
+        with:
+          app-id: ${{ secrets.AMPLIFY_APP_ID }}
+          branch-name: main
+          frontend: "framework=vite"
+          build-command: "npm run build"
+          start-command: "npm run dev"
+          artifact: "dist"
